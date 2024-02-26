@@ -5,9 +5,13 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -96,6 +100,74 @@ public class MappoTest {
   @MethodSource("getSource")
   public <K, V> void getTest(Map<K, V> map, K key, V value) {
     assertEquals(value, Mappo.of(map).get(key));
+  }
+
+  @Test
+  public void mapTest() {
+    Map<String, String> map = Map.of("key1", "value1");
+    assertEquals(map, Mappo.of(map).map());
+  }
+
+  @Test
+  public void computeTest() {
+    Map<String, String> map = new HashMap<>();
+    map.put("key1", "value1");
+
+    BiFunction<String, String, String> remap = (k, v) -> v == null ? "null"  : v + " and... done";
+
+    Mappo<String, String> mappo = Mappo.of(map)
+        .compute("key1", remap)
+        .compute("key2", remap);
+
+    assertTrue(mappo.opt("key1")
+        .filter("value1 and... done"::equals)
+        .isPresent()
+    );
+    assertTrue(mappo.opt("key2")
+        .filter("null"::equals)
+        .isPresent()
+    );
+  }
+
+  @Test
+  public void computeIfPresentTest() {
+    Map<String, String> map = new HashMap<>();
+    map.put("key1", "value1");
+
+    BiFunction<String, String, String> remap = (k, v) -> v + " and... done";
+
+    Mappo<String, String> mappo = Mappo.of(map)
+        .computeIfPresent("key1", remap)
+        .computeIfPresent("key2", remap);
+
+    assertTrue(mappo.opt("key1")
+        .filter("value1 and... done"::equals)
+            .isPresent()
+    );
+    assertTrue(mappo.opt("key2")
+        .isEmpty()
+    );
+  }
+
+  @Test
+  public void computeIfAbsentTest() {
+    Map<String, String> map = new HashMap<>();
+    map.put("key1", "value1");
+
+    Function<String, String> remap = (k) -> "null";
+
+    Mappo<String, String> mappo = Mappo.of(map)
+        .computeIfAbsent("key1", remap)
+        .computeIfAbsent("key2", remap);
+
+    assertTrue(mappo.opt("key1")
+        .filter("value1"::equals)
+        .isPresent()
+    );
+    assertTrue(mappo.opt("key2")
+        .filter("null"::equals)
+        .isPresent()
+    );
   }
 
 }

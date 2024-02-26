@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.NonNull;
@@ -48,6 +50,46 @@ public class Mappo<K, V> {
    */
   public Optional<V> opt(K key) {
     return Optional.ofNullable(map.get(key));
+  }
+
+  /**
+   * Compute map wrapped in this class, see {@link Map#compute(Object, BiFunction)}
+   * 
+   * @param key key of map
+   * @param remappingFunction function remapping the value of map entries
+   * @return new value associated with remapping function
+   */
+  public Mappo<K, V> compute(K key, BiFunction<K, V, V> remappingFunction) {
+    map.compute(key, remappingFunction);
+    return this;
+  }
+
+  /**
+   * Compute map wrapped in this class for value with present key,
+   * value with absent key will be ignored,
+   * see {@link Map#computeIfPresent(Object, BiFunction)}
+   *
+   * @param key key of map
+   * @param remappingFunction function remapping the value of map entries
+   * @return new value associated with remapping function
+   */
+  public Mappo<K, V> computeIfPresent(K key, BiFunction<K, V, V> remappingFunction) {
+    map.computeIfPresent(key, remappingFunction);
+    return this;
+  }
+
+  /**
+   * Compute map wrapped in this class for value with absent key,
+   * value with present key will be ignored,
+   * see {@link Map#computeIfPresent(Object, BiFunction)}
+   *
+   * @param key key of map
+   * @param remappingFunction function remapping the value of map entries
+   * @return new value associated with remapping function
+   */
+  public Mappo<K, V> computeIfAbsent(K key, Function<K, V> remappingFunction) {
+    map.computeIfAbsent(key, remappingFunction);
+    return this;
   }
 
   /**
