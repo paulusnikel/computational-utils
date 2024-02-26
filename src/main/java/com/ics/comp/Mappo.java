@@ -1,6 +1,7 @@
 package com.ics.comp;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -24,7 +25,7 @@ public class Mappo<K, V> {
   private Map<K, V> map;
 
   /**
-   * Return {@link Mappo from map}
+   * Return {@link Mappo} from map
    *
    * @param _map the map, non nullable
    * @return Mappo
@@ -36,10 +37,33 @@ public class Mappo<K, V> {
   }
 
   /**
+   * Return {@link Mappo} of an empty {@link HashMap}
+   *
+   * @return Mappo
+   * @param <K> Map key type
+   * @param <V> Map value type
+   */
+  public static <K, V> Mappo<K, V> of() {
+    return new Mappo<>(new HashMap<>());
+  }
+
+  /**
    * @return map from wrapper
    */
   public Map<K, V> map() {
     return this.map;
+  }
+
+  /**
+   * Put new value with assigned key
+   *
+   * @param key entry key
+   * @param value entry value
+   * @return this mappo
+   */
+  public Mappo<K, V> put(K key, V value) {
+    map.put(key, value);
+    return this;
   }
 
   /**

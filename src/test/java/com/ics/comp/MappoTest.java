@@ -170,4 +170,14 @@ public class MappoTest {
     );
   }
 
+  @Test
+  public void ofTest() {
+    String optValue = Mappo.<String, String>of()
+        .put("key1", "value1")
+        .put("key2", "value2")
+        .opt("key1")
+        .orElse(null);
+    assertEquals("value1", optValue);
+  }
+
 }
