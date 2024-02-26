@@ -34,6 +34,44 @@ public class MappoTest {
     );
   }
 
+  public static Stream<Arguments> optSource() {
+    return Stream.of(
+        Arguments.of(
+            Map.of(
+                "key1", "value1",
+                "key2", "value2"),
+            "key2",
+            "value2"
+        ),
+        Arguments.of(
+            Map.of(
+                "key1", "value1",
+                "key2", "value2"),
+            "key3",
+            null
+        )
+    );
+  }
+
+  public static Stream<Arguments> getSource() {
+    return Stream.of(
+        Arguments.of(
+            Map.of(
+                "key1", "value1",
+                "key2", "value2"),
+            "key2",
+            "value2"
+        ),
+        Arguments.of(
+            Map.of(
+                "key1", "value1",
+                "key2", "value2"),
+            "key3",
+            null
+        )
+    );
+  }
+
   @ParameterizedTest
   @MethodSource("getAllSource")
   public <K, V> void getAllTest(Map<K, V> map, List<K> keys, List<V> values) {
@@ -46,6 +84,18 @@ public class MappoTest {
     } catch (Exception e) {
       assertInstanceOf(NullPointerException.class, e);
     }
+  }
+
+  @ParameterizedTest
+  @MethodSource("optSource")
+  public <K, V> void optTest(Map<K, V> map, K key, V value) {
+    assertEquals(value, Mappo.of(map).opt(key).orElse(null));
+  }
+
+  @ParameterizedTest
+  @MethodSource("getSource")
+  public <K, V> void getTest(Map<K, V> map, K key, V value) {
+    assertEquals(value, Mappo.of(map).get(key));
   }
 
 }
